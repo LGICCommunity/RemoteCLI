@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-#define SERVER_IP "127.0.0.1"  // Change to your server's IP
+#define SERVER_IP "127.0.0.1"  // Change ip
 #define PORT 8080
 #define BUFFER_SIZE 1024
 
@@ -36,7 +36,6 @@ int main() {
         printf("Client> ");
         fgets(command, BUFFER_SIZE, stdin);
 
-        // Exit condition
         if (strncmp(command, "exit", 4) == 0) break;
 
         send(sock, command, strlen(command), 0);
