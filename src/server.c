@@ -44,20 +44,18 @@ int main() {
 
         printf("Received command: %s", buffer);
 
-        FILE *fp = popen(buffer, "r");
+        FILE* fp = popen(buffer, "r");
         if (!fp) {
             strcpy(buffer, "Failed to execute command.\n");
             send(client_fd, buffer, strlen(buffer), 0);
             continue;
         }
 
-        // Read output and send it back
         while (fgets(buffer, BUFFER_SIZE, fp) != NULL) {
             send(client_fd, buffer, strlen(buffer), 0);
         }
         pclose(fp);
 
-        // Optional: signal end of output
         send(client_fd, "__END__", strlen("__END__"), 0);
     }
 
