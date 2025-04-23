@@ -1,4 +1,4 @@
-# RemoteCLI Documentation
+# RemoteCLI 
 
 ## Overview
 RemoteCLI is a lightweight client-server tool designed to allow remote execution of shell commands over a TCP connection. It is written in C and provides a basic mechanism for connecting a remote terminal to a host system.
