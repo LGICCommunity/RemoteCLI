@@ -1,11 +1,10 @@
-all: server client
-
-server: server.c
-	gcc server.c -o server
-
-client: client.c
-	gcc client.c -o client
+all:
+	$(MAKE) -C client
+	$(MAKE) -C server
+	mv client/client builds/
+	mv server/server builds/
 
 clean:
-	rm -f server client
-
+	$(MAKE) -C client clean
+	$(MAKE) -C server clean
+	rm -rf builds/*
