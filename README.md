@@ -1,196 +1,40 @@
-# RemoteCLI
-## Project: Remote Terminal Access Using C (CLI Based)
+# RemoteCLI Documentation
+
+## Overview
+RemoteCLI is a lightweight client-server tool designed to allow remote execution of shell commands over a TCP connection. It is written in C and provides a basic mechanism for connecting a remote terminal to a host system.
 
 ---
 
-### 1. Objective
+## Architecture
+RemoteCLI is composed of two main components:
 
-Develop a C-based application to remotely access and execute terminal commands on another machine via TCP sockets, allowing basic communication between client and server through CLI.
+### 1. Server (`server.c`)
+- Listens for TCP connections on a configurable port (default: `8080`)
+- Accepts a single client connection at a time
+- Receives command strings from the client
+- Executes the command using `popen()` and captures the output
+- Sends the command output back to the client line-by-line
+- Sends `__END__` as a delimiter to indicate the end of command output
 
----
-
-### 2. Key Features
-
-- Client sends terminal commands.
-    
-- Server executes the command.
-    
-- Server returns a success message (or output).
-    
-- Pure C implementation using Linux socket programming.
-    
-
----
-
-### 3. Use Case Scenario
-
-You (client) want to execute commands on your friend's (server) machine sitting in another room. You connect to their IP, send commands, and get confirmation back.
+### 2. Client
+- Connects to the server using IPv4 TCP
+- Sends shell commands to the server
+- Receives and prints the output from the server
+- Sends `exit` to terminate the session
 
 ---
 
-### 4. Tools and Technologies
-
-- Language: C
-    
-- Platform: Linux (Ubuntu recommended)
-    
-- Compiler: GCC
-    
-- Concepts: TCP/IP Sockets, CLI I/O, Basic Networking
-    
+## Protocol Details
+- Communication is plain TCP
+- Data is exchanged as raw strings
+- A special delimiter string `__END__` is used to indicate the end of a command's output
 
 ---
 
-### 5. System Requirements
-
-- Two machines in the same LAN (or use port forwarding for WAN).
-    
-- Terminal access (Linux bash).
-    
-- Open ports and no firewall blockage on server side.
-    
+## Limitations
+- Single client support only
+- No authentication or encryption (not suitable for production use without additional security layers)
+- Minimal error handling
+- Shell command execution is not sandboxed — **potentially unsafe**
 
 ---
-
-### 6. Architecture Diagram
-
-```
-+-------------------+                       +---------------------+
-|                   |  TCP Connection (8080)|                     |
-|     CLIENT        | <-------------------> |      SERVER         |
-|                   |                       |                     |
-|  - Send command   |                       | - Receive command   |
-|  - View response  |                       | - Execute using C   |
-|  - CLI Interface  |                       | - Respond result    |
-+-------------------+                       +---------------------+
-```
-
----
-
-### 7. System Flow Diagram
-
-```
-[Client]              [Network]            [Server]
-   |                       |                   |
-   |--- Connect to Server --->                |
-   |                       |<--- Accept -------|
-   |--- Send Command ------>                  |
-   |                       |--- Execute ------> (system())
-   |                       |<-- Output/Msg ----|
-   |<-- Display Output ----                   |
-```
-
----
-
-### 8. Implementation Steps
-
-#### Step 1: Server Side Code
-
-- Create a socket
-    
-- Bind to port (e.g., 8080)
-    
-- Listen for incoming connection
-    
-- Accept client connection
-    
-- Continuously read incoming commands
-    
-- Execute commands using `system()` or `popen()`
-    
-- Send response back to client
-    
-
-#### Step 2: Client Side Code
-
-- Create socket
-    
-- Connect to server IP:PORT
-    
-- Input commands from user (using `fgets`)
-    
-- Send commands over socket
-    
-- Receive response from server
-    
-- Print output on CLI
-    
-
----
-
-### 9. Sample Command Flow
-
-```bash
-Client> ls
-Server> Executes "ls"
-Server> Returns: file1.txt file2.c main.o
-Client> Displays output
-```
-
----
-
-### 10. Security Concerns
-
-- No encryption (plain text commands).
-    
-- Arbitrary command execution (risky without filters).
-    
-- Use only in a secure LAN environment or with known devices.
-    
-- For real-world use, add authentication and SSL.
-    
-
----
-
-### 11. Future Enhancements
-
-- Command output transfer (full response, not just "Executed").
-    
-- Add authentication (username & password).
-    
-- Encrypt communication using OpenSSL.
-    
-- File transfer support.
-    
-- Cross-platform support.
-    
-
----
-
-### 12. Real-World Use Inspiration
-
-- SSH-like remote control
-    
-- Remote administration
-    
-- Classroom computer monitoring
-    
-- IoT device command control
-    
-
----
-
-### 13. Project Folder Structure
-
-```
-/remote-terminal/
-  ├── client.c
-  ├── server.c
-  ├── README.md
-  └── Makefile (optional)
-```
-
----
-
-### 14. Presentation Tip
-
-Show a live demo using 2 virtual machines or real systems in LAN:
-
-- Run ./server on one.
-    
-- Run ./client on another, connect, and type:
-    
-    ```
-    ls
-    date
-    ```
